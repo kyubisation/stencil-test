@@ -18,8 +18,8 @@ export class SbbTab {
   render() {
     return (
       <Host slot="sbb-tab">
-        <template>
-          {this._hasLabelElement ? '' : <span>{this.label}</span>}
+        <template class="sbb-tab-label-template">
+          {!this._hasLabelElement && <span>{this.label}</span>}
           <slot name="sbb-tab-label" onSlotchange={this._handleLabelSlotChange} />
         </template>
         {this.active && <slot></slot>}
@@ -29,7 +29,7 @@ export class SbbTab {
 
   @Watch('label')
   _handleLabelChange(newValue: string, oldValue: string) {
-    if (newValue !== oldValue) {
+    if (!this._hasLabelElement && newValue !== oldValue) {
       setTimeout(() => this.tabLabelChanged.emit());
     }
   }

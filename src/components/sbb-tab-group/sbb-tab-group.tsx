@@ -68,7 +68,11 @@ export class SbbTabGroup {
   }
 
   private _handleTabsChange = (_event: Event) => {
-    this.tabs = Array.from(this.el.children).filter((e): e is HTMLSbbTabElement => e.nodeName === 'SBB-TAB');
+    this.tabs =
+      this.el
+        .shadowRoot!.querySelector<HTMLSlotElement>(':host>slot[name="sbb-tab"]')
+        ?.assignedElements()
+        .filter((e): e is HTMLSbbTabElement => e.nodeName === 'SBB-TAB') ?? [];
     const activeTabs = this.tabs.filter(t => t.active);
     if (activeTabs.length === 0 && this.tabs.length) {
       this.tabs[0].active = true;
@@ -104,12 +108,14 @@ export class SbbTabGroup {
     this._tabLabelMap.set(tab, el);
     const newNode = this._getTabLabelTemplate(tab);
     if (newNode) {
-      el.appendChild(newNode);
+      el.replaceChildren(newNode);
     }
   }
 
   private _getTabLabelTemplate(tab: HTMLSbbTabElement): Node | undefined {
-    const templateElement = tab.shadowRoot?.querySelector<HTMLTemplateElement>(':host>template')?.firstElementChild;
+    const templateElement = tab.shadowRoot?.querySelector<HTMLTemplateElement>(
+      ':host>template.sbb-tab-label-template',
+    )?.firstElementChild;
     return templateElement?.nodeName === 'SLOT'
       ? (templateElement as HTMLSlotElement).assignedElements()[0]?.cloneNode(true)
       : templateElement?.cloneNode(true);
