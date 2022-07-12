@@ -1,0 +1,9 @@
+on:
+  repository_dispatch:
+    types: [LIBRARY_PUBLISH]
+
+jobs:
+  run_if_failure:
+    runs-on: ubuntu-latest
+    steps:
+        run: echo ${{ toJSON(github.event) }}
